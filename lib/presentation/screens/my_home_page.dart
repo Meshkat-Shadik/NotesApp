@@ -1,5 +1,7 @@
+import 'package:auto_route/auto_route.dart';
 import 'package:flutter/material.dart';
 import 'package:notes_app/infrastructure/note_model.dart';
+import 'package:notes_app/presentation/routes/router.gr.dart';
 import 'package:notes_app/presentation/screens/note_modify_page.dart';
 import 'package:notes_app/presentation/widgets/remove_dialog.dart';
 
@@ -32,8 +34,7 @@ class MyHomePage extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => NoteModify()));
+          AutoRouter.of(context).push(NoteModifyRoute());
         },
         child: Icon(Icons.add),
       ),
@@ -70,12 +71,9 @@ class MyHomePage extends StatelessWidget {
               trailing: IconButton(
                 icon: Icon(Icons.arrow_forward_ios),
                 onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => NoteModify(
-                        noteId: notes[index].noteId,
-                      ),
+                  AutoRouter.of(context).push(
+                    NoteModifyRoute(
+                      noteId: notes[index].noteId,
                     ),
                   );
                 },
