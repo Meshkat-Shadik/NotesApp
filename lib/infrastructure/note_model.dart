@@ -29,6 +29,10 @@ class NotesModel {
       };
 }
 
+Datum datumFromJson(String str) => Datum.fromJson(json.decode(str));
+
+String datumToJson(Datum data) => json.encode(data.toJson());
+
 class Datum {
   Datum({
     this.createdTime,
@@ -53,10 +57,31 @@ class Datum {
       );
 
   Map<String, dynamic> toJson() => {
-        "createdTime": createdTime?.toIso8601String(),
+        "createdTime": createdTime?.toIso8601String() ?? updatedTime,
         "_id": id,
         "title": title,
         "description": description,
         "updatedTime": updatedTime?.toIso8601String(),
+      };
+}
+
+ResponseModel responseModelFromJson(String str) =>
+    ResponseModel.fromJson(json.decode(str));
+
+String responseModelToJson(ResponseModel data) => json.encode(data.toJson());
+
+class ResponseModel {
+  ResponseModel({
+    this.message,
+  });
+
+  String? message;
+
+  factory ResponseModel.fromJson(Map<String, dynamic> json) => ResponseModel(
+        message: json["message"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "message": message,
       };
 }

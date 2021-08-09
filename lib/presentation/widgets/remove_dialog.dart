@@ -1,27 +1,20 @@
 import 'package:flutter/material.dart';
 
-class NoteDeleteDialog extends StatelessWidget {
-  const NoteDeleteDialog({Key? key}) : super(key: key);
-
+class NoteDialog extends StatelessWidget {
+  const NoteDialog({
+    required this.title,
+    required this.description,
+    required this.widgets,
+  });
+  final String title;
+  final String description;
+  final List<Widget> widgets;
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text('Warning'),
-      content: Text('Are you sure you want to delete this note?'),
-      actions: [
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop(true);
-          },
-          child: Text('Yes'),
-        ),
-        TextButton(
-          onPressed: () {
-            Navigator.of(context).pop(false);
-          },
-          child: Text('No'),
-        ),
-      ],
+      title: Text(title),
+      content: Text(description),
+      actions: widgets,
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:notes_app/infrastructure/api_response.dart';
 import 'package:notes_app/infrastructure/note_model.dart';
 import 'package:notes_app/infrastructure/note_repository.dart';
+import 'package:notes_app/presentation/widgets/remove_dialog.dart';
 
 class NoteModify extends StatefulWidget {
   const NoteModify({this.noteId});
@@ -15,6 +16,8 @@ class NoteModify extends StatefulWidget {
 class _NoteModifyState extends State<NoteModify> {
   bool get isEditing => widget.noteId != null;
   late APIResponse<NotesModel> _apiResponse;
+  late APIResponse<ResponseModel> _apiResponseSuccessOrError;
+  late APIResponse<ResponseModel> _apiUpdateResponse;
   bool isLoading = true;
 
   void initState() {
@@ -26,6 +29,13 @@ class _NoteModifyState extends State<NoteModify> {
     } else {
       isLoading = false;
     }
+  }
+
+  @override
+  void dispose() {
+    _titleController.clear();
+    _descriptionController.clear();
+    super.dispose();
   }
 
   void _fetchNotes(String id) async {
@@ -41,6 +51,72 @@ class _NoteModifyState extends State<NoteModify> {
       isLoading = false;
     });
     // setState(() {});
+  }
+
+  void _createNotes(
+      String title, String description, BuildContext parentContext) async {
+    setState(() {
+      isLoading = true;
+    });
+    final Datum noteBody = Datum(
+      title: title,
+      description: description,
+      createdTime: DateTime.now(),
+    );
+    _apiResponseSuccessOrError = await NotesRepository().createNote(noteBody);
+    if (_apiResponseSuccessOrError.data != null) {
+      final result = await showDialog(
+        context: context,
+        builder: (context) => NoteDialog(
+          title: 'Success',
+          description: _apiResponseSuccessOrError.data!.message.toString(),
+          widgets: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+                Navigator.pop(parentContext);
+              },
+              child: Text('Ok'),
+            ),
+          ],
+        ),
+      );
+      return result;
+    }
+    Navigator.pop(context);
+  }
+
+  void _updateNote(String id, String title, String description,
+      BuildContext parentContext) async {
+    setState(() {
+      isLoading = true;
+    });
+    final Datum noteBody = Datum(
+      title: title,
+      description: description,
+      createdTime: DateTime.now(),
+    );
+    _apiUpdateResponse = await NotesRepository().updateNote(id, noteBody);
+    if (_apiUpdateResponse.data != null) {
+      final result = await showDialog(
+        context: context,
+        builder: (context) => NoteDialog(
+          title: 'Success',
+          description: _apiUpdateResponse.data!.message.toString(),
+          widgets: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+                Navigator.pop(parentContext);
+              },
+              child: Text('Ok'),
+            ),
+          ],
+        ),
+      );
+      return result;
+    }
+    //Navigator.pop(context);
   }
 
   TextEditingController _titleController = TextEditingController();
@@ -81,7 +157,16 @@ class _NoteModifyState extends State<NoteModify> {
                     width: double.infinity,
                     child: ElevatedButton(
                       onPressed: () {
-                        Navigator.pop(context);
+                        if (!isEditing) {
+                          _createNotes(_titleController.text.trim(),
+                              _descriptionController.text.trim(), context);
+                        } else {
+                          _updateNote(
+                              widget.noteId ?? '',
+                              _titleController.text.trim(),
+                              _descriptionController.text.trim(),
+                              context);
+                        }
                       },
                       child: Text('Submit'),
                     ),
