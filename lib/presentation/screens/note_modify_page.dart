@@ -18,10 +18,14 @@ class _NoteModifyState extends State<NoteModify> {
   bool isLoading = true;
 
   void initState() {
-    Future.delayed(Duration.zero,
-        () => _fetchNotes(widget.noteId ?? '61044289251542208452a1b2'));
-
     super.initState();
+
+    if (widget.noteId != null) {
+      Future.delayed(Duration.zero,
+          () => _fetchNotes(widget.noteId ?? '61044289251542208452a1b2'));
+    } else {
+      isLoading = false;
+    }
   }
 
   void _fetchNotes(String id) async {
