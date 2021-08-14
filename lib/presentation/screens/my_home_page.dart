@@ -151,7 +151,6 @@ class _MyHomePageState extends State<MyHomePage> {
                                   ),
                                 )
                                 .then((_) => _fetchNotes());
-                            ;
                           },
                         ),
                       ),

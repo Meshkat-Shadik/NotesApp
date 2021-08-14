@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:notes_app/infrastructure/api_response.dart';
 import 'package:notes_app/infrastructure/note_model.dart';
 import 'package:http/http.dart' as http;
